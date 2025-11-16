@@ -10,3 +10,7 @@ export async function createUser(user: NewUser): Promise<User> {
 
   return result
 }
+
+export async function deleteUsers() {
+  await db.delete(users)
+}
