@@ -12,5 +12,15 @@ export function handlerChirpsValidate(req: Request, res: Response) {
     return
   }
 
-  respondWithJSON(res, 200, { valid: true })
+  const words = params.body.split(' ')
+  const badWords = ['kerfuffle', 'sharbert', 'fornax']
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i]
+    const loweredWord = word.toLowerCase()
+    if (badWords.includes(loweredWord)) {
+      words[i] = '****'
+    }
+  }
+  const result = words.join(' ')
+  respondWithJSON(res, 200, { cleanedBody: result })
 }
