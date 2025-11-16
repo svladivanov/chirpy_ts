@@ -6,3 +6,7 @@ export async function createChirp(chirp: NewChirp): Promise<Chirp> {
 
   return result
 }
+
+export async function getChirps(): Promise<Chirp[]> {
+  return await db.select().from(chirps).orderBy(chirps.createdAt)
+}

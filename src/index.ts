@@ -7,7 +7,7 @@ import {
 } from './api/middleware.js'
 import { handlerReset } from './api/handlerReset.js'
 import { handlerMetrics } from './api/handlerMetrics.js'
-import { handlerCreateChirp } from './api/handlerChirps.js'
+import { handlerCreateChirp, handlerGetChirps } from './api/handlerChirps.js'
 import postgres from 'postgres'
 import { config } from './config.js'
 import { migrate } from 'drizzle-orm/postgres-js/migrator'
@@ -26,15 +26,21 @@ app.use('/app', middlewareMetricsInc, express.static('./src/app'))
 app.get('/api/healthz', (req, res, next) => {
   Promise.resolve(handlerReadiness(req, res)).catch(next)
 })
+
 app.get('/admin/metrics', (req, res, next) => {
   Promise.resolve(handlerMetrics(req, res)).catch(next)
 })
 app.post('/admin/reset', (req, res, next) => {
   Promise.resolve(handlerReset(req, res)).catch(next)
 })
+
+app.get('/api/chirps', (req, res, next) => {
+  Promise.resolve(handlerGetChirps(req, res)).catch(next)
+})
 app.post('/api/chirps', (req, res, next) => {
   Promise.resolve(handlerCreateChirp(req, res)).catch(next)
 })
+
 app.post('/api/users', (req, res, next) => {
   Promise.resolve(handlerCreateUser(req, res)).catch(next)
 })
