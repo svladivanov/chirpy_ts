@@ -1,6 +1,12 @@
 import type { Request, Response, NextFunction } from 'express'
 import { config } from '../config.js'
 import { respondWithError } from './json.js'
+import {
+  BadRequestError,
+  NotFoundError,
+  UserForbiddenError,
+  UserNotAuthenticatedError,
+} from './errors.js'
 
 export function middlewareLogResponses(
   req: Request,
@@ -33,9 +39,26 @@ export function middlerwareError(
   __: NextFunction
 ) {
   let statusCode = 500
-  let message = 'Something went wrong on our end'
+  let errorMessage = 'Something went wrong on our end'
 
-  console.log(err.message)
+  switch (true) {
+    case err instanceof BadRequestError:
+      statusCode = 400
+      errorMessage = err.message
+    case err instanceof UserNotAuthenticatedError:
+      statusCode = 401
+      errorMessage = err.message
+    case err instanceof UserForbiddenError:
+      statusCode = 403
+      errorMessage = err.message
+    case err instanceof NotFoundError:
+      statusCode = 404
+      errorMessage = err.message
+  }
 
-  respondWithError(res, statusCode, message)
+  if (statusCode >= 500) {
+    console.log(err.message)
+  }
+
+  respondWithError(res, statusCode, errorMessage)
 }
