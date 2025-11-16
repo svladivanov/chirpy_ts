@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { respondWithError, respondWithJSON } from './json.js'
+import { respondWithJSON } from './json.js'
 
 export function handlerChirpsValidate(req: Request, res: Response) {
   type parameters = {
@@ -8,8 +8,7 @@ export function handlerChirpsValidate(req: Request, res: Response) {
   const params: parameters = req.body
 
   if (params.body.length > 140) {
-    respondWithError(res, 400, 'Chirp is too long')
-    return
+    throw new Error('Chirp is too long')
   }
 
   const words = params.body.split(' ')
