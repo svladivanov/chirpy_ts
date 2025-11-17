@@ -3,19 +3,23 @@ import { respondWithJSON } from './json.js'
 import { BadRequestError } from './errors.js'
 import { createChirp, getChirpByID, getChirps } from '../db/queries/chirps.js'
 import { NewChirp } from '../db/schema.js'
+import { getBearerToken, validateJWT } from '../auth.js'
+import { config } from '../config.js'
 
 export async function handlerCreateChirp(req: Request, res: Response) {
   type parameters = {
     body: string
-    userId: string
   }
 
   const params: parameters = req.body
 
+  const jwtToken = getBearerToken(req)
+  const userID = validateJWT(jwtToken, config.jwt.secret)
+
   const cleaned = validateChirp(params.body)
   const newChirp: NewChirp = {
     body: cleaned,
-    userId: params.userId,
+    userId: userID,
   }
   const chirp = await createChirp(newChirp)
 
