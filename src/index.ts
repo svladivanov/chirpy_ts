@@ -17,6 +17,7 @@ import { config } from './config.js'
 import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import { drizzle } from 'drizzle-orm/postgres-js'
 import { handlerCreateUser } from './api/handlerUsers.js'
+import { handlerLogin } from './api/auth.js'
 
 const migrationClient = postgres(config.db.url, { max: 1 })
 await migrate(drizzle(migrationClient), config.db.migrationConfig)
@@ -36,6 +37,10 @@ app.get('/admin/metrics', (req, res, next) => {
 })
 app.post('/admin/reset', (req, res, next) => {
   Promise.resolve(handlerReset(req, res)).catch(next)
+})
+
+app.post('/api/login', (req, res, next) => {
+  Promise.resolve(handlerLogin(req, res)).catch(next)
 })
 
 app.get('/api/chirps', (req, res, next) => {

@@ -41,22 +41,19 @@ export function middlerwareError(
   let statusCode = 500
   let errorMessage = 'Something went wrong on our end'
 
-  switch (true) {
-    case err instanceof BadRequestError:
-      statusCode = 400
-      errorMessage = err.message
-    case err instanceof UserNotAuthenticatedError:
-      statusCode = 401
-      errorMessage = err.message
-    case err instanceof UserForbiddenError:
-      statusCode = 403
-      errorMessage = err.message
-    case err instanceof NotFoundError:
-      statusCode = 404
-      errorMessage = err.message
-  }
-
-  if (statusCode >= 500) {
+  if (err instanceof BadRequestError) {
+    statusCode = 400
+    errorMessage = err.message
+  } else if (err instanceof UserNotAuthenticatedError) {
+    statusCode = 401
+    errorMessage = err.message
+  } else if (err instanceof UserForbiddenError) {
+    statusCode = 403
+    errorMessage = err.message
+  } else if (err instanceof NotFoundError) {
+    statusCode = 404
+    errorMessage = err.message
+  } else if (statusCode >= 500) {
     console.log(err.message)
   }
 
