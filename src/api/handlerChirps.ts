@@ -36,10 +36,19 @@ export async function handlerCreateChirp(req: Request, res: Response) {
   respondWithJSON(res, 201, chirp)
 }
 
-export async function handlerGetChirps(_: Request, res: Response) {
-  const chirps = await getChirps()
+export async function handlerGetChirps(req: Request, res: Response) {
+  let authorId = ''
+  let authorIdQuery = req.query.authorId
+  if (typeof authorIdQuery === 'string') {
+    authorId = authorIdQuery
+  }
 
-  respondWithJSON(res, 200, chirps)
+  const chirps = await getChirps()
+  const filteredChirps = chirps.filter(
+    (chirp) => chirp.userId === authorId || authorId === ''
+  )
+
+  respondWithJSON(res, 200, filteredChirps)
 }
 
 export async function handlerGetChirpByID(req: Request, res: Response) {
