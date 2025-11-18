@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
-import { createUser, updateUser } from '../db/queries/users.js'
+import { createUser, updateUser, upgradeUser } from '../db/queries/users.js'
 import { NewUser, User } from '../db/schema.js'
 import { respondWithJSON } from './json.js'
-import { BadRequestError, UserNotAuthenticatedError } from './errors.js'
+import { BadRequestError, NotFoundError } from './errors.js'
 import { getBearerToken, hashPassword, validateJWT } from '../auth.js'
 import { config } from '../config.js'
 
@@ -33,6 +33,7 @@ export async function handlerCreateUser(req: Request, res: Response) {
     email: user.email,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
+    isChirpyRed: user.isChirpyRed,
   } satisfies UserResponse)
 }
 
@@ -60,5 +61,27 @@ export async function handlerUpdateUser(req: Request, res: Response) {
     email: updatedUser.email,
     createdAt: updatedUser.createdAt,
     updatedAt: updatedUser.updatedAt,
+    isChirpyRed: updatedUser.isChirpyRed,
   } satisfies UserResponse)
+}
+
+export async function handlerUpgradeUser(req: Request, res: Response) {
+  type parameters = {
+    event: string
+    data: {
+      userId: string
+    }
+  }
+  const params: parameters = req.body
+  if (params.event !== 'user.upgraded') {
+    res.status(204).send()
+    return
+  }
+
+  const upgraded = await upgradeUser(params.data.userId)
+  if (!upgraded) {
+    throw new NotFoundError('User could not be found')
+  }
+
+  res.status(204).send()
 }

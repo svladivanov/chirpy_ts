@@ -15,6 +15,13 @@
       "when": 1763459048249,
       "tag": "0001_equal_scorpion",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1763477325244,
+      "tag": "0002_complex_gargoyle",
+      "breakpoints": true
     }
   ]
 }
