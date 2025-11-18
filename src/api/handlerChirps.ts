@@ -43,9 +43,20 @@ export async function handlerGetChirps(req: Request, res: Response) {
     authorId = authorIdQuery
   }
 
+  let sort = 'asc'
+  let sortQuery = req.query.sort
+  if (sortQuery === 'desc') {
+    sort = 'desc'
+  }
+
   const chirps = await getChirps()
   const filteredChirps = chirps.filter(
     (chirp) => chirp.userId === authorId || authorId === ''
+  )
+  filteredChirps.sort((a, b) =>
+    sort === 'asc'
+      ? a.createdAt.getTime() - b.createdAt.getTime()
+      : b.createdAt.getTime() - a.createdAt.getTime()
   )
 
   respondWithJSON(res, 200, filteredChirps)
