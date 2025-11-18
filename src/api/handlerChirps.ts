@@ -1,7 +1,17 @@
 import { Request, Response } from 'express'
 import { respondWithJSON } from './json.js'
-import { BadRequestError } from './errors.js'
-import { createChirp, getChirpByID, getChirps } from '../db/queries/chirps.js'
+import {
+  BadRequestError,
+  NotFoundError,
+  UserForbiddenError,
+  UserNotAuthenticatedError,
+} from './errors.js'
+import {
+  createChirp,
+  deleteChirpByID,
+  getChirpByID,
+  getChirps,
+} from '../db/queries/chirps.js'
 import { NewChirp } from '../db/schema.js'
 import { getBearerToken, validateJWT } from '../auth.js'
 import { config } from '../config.js'
@@ -39,8 +49,34 @@ export async function handlerGetChirpByID(req: Request, res: Response) {
   }
 
   const chirp = await getChirpByID(chirpID)
+  if (!chirp) {
+    throw new NotFoundError('Chirp not found')
+  }
 
   respondWithJSON(res, 200, chirp)
+}
+
+export async function handlerDeleteChirp(req: Request, res: Response) {
+  const { chirpID } = req.params
+
+  const token = getBearerToken(req)
+  const userID = validateJWT(token, config.jwt.secret)
+
+  const dbChrip = await getChirpByID(chirpID)
+  if (!dbChrip) {
+    throw new NotFoundError('Could not find chirp')
+  }
+
+  if (userID !== dbChrip.userId) {
+    throw new UserForbiddenError("Cannot delete other users' chirps")
+  }
+
+  const deleted = await deleteChirpByID(chirpID)
+  if (!deleted) {
+    throw new Error('Failed to delete chirp')
+  }
+
+  res.status(204).send()
 }
 
 function validateChirp(body: string) {

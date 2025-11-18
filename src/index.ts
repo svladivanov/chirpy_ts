@@ -9,6 +9,7 @@ import { handlerReset } from './api/handlerReset.js'
 import { handlerMetrics } from './api/handlerMetrics.js'
 import {
   handlerCreateChirp,
+  handlerDeleteChirp,
   handlerGetChirpByID,
   handlerGetChirps,
 } from './api/handlerChirps.js'
@@ -54,6 +55,9 @@ app.get('/api/chirps', (req, res, next) => {
 })
 app.get('/api/chirps/:chirpID', (req, res, next) => {
   Promise.resolve(handlerGetChirpByID(req, res)).catch(next)
+})
+app.delete('/api/chirps/:chirpID', (req, res, next) => {
+  Promise.resolve(handlerDeleteChirp(req, res)).catch(next)
 })
 app.post('/api/chirps', (req, res, next) => {
   Promise.resolve(handlerCreateChirp(req, res)).catch(next)
