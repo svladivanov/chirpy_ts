@@ -1,4 +1,5 @@
 import argon2 from 'argon2'
+import crypto from 'crypto'
 import jwt, { type JwtPayload } from 'jsonwebtoken'
 import { BadRequestError, UserNotAuthenticatedError } from './api/errors.js'
 import { Request } from 'express'
@@ -74,4 +75,8 @@ export function extractBearerToken(header: string) {
   }
 
   return splitAuth[1]
+}
+
+export function makeRefreshToken() {
+  return crypto.randomBytes(32).toString('hex')
 }

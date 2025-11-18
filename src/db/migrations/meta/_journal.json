@@ -8,6 +8,13 @@
       "when": 1763299640123,
       "tag": "0000_productive_network",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1763459048249,
+      "tag": "0001_equal_scorpion",
+      "breakpoints": true
     }
   ]
 }
