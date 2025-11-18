@@ -21,3 +21,13 @@ export async function getUserByEmail(email: string) {
 
   return result
 }
+
+export async function updateUser(userID: string, user: NewUser) {
+  const [result] = await db
+    .update(users)
+    .set(user)
+    .where(eq(users.id, userID))
+    .returning()
+
+  return result
+}
